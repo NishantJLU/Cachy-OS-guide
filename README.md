@@ -1,7 +1,7 @@
 # Setup Guide: CachyOS & Hermes Agent (with Ollama or OpenAI)
 
-[![License: MIT](https://img.shields.io/github/license/NishantJLU/Cachy-OS-guide?style=for-the-badge&logo=github&color=blue)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/NishantJLU/Cachy-OS-guide?style=for-the-badge&logo=github&color=gold)](https://github.com/NishantJLU/Cachy-OS-guide/stargazers)
+[![License: MIT](https://img.shields.io/github/license/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey?style=for-the-badge&logo=github&color=blue)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey?style=for-the-badge&logo=github&color=gold)](https://github.com/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey/stargazers)
 [![OS: CachyOS](https://img.shields.io/badge/OS-CachyOS-green?style=for-the-badge&logo=arch-linux&logoColor=white)](https://cachyos.org)
 [![Engine: Ollama](https://img.shields.io/badge/Engine-Ollama-black?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com)
 [![Agent: Hermes](https://img.shields.io/badge/Agent-Hermes-purple?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/NousResearch/hermes-agent)
@@ -14,7 +14,7 @@ This guide will walk you through setting up CachyOS, installing Ollama (with GPU
 
 ### Repository Structure
 ```text
-Cachy OS Guide (Repository Root)
+A collection of tweaks and notes from my CachyOS journey (Repository Root)
 ├── assets/
 │   └── architecture.jpg        # Architecture diagram
 ├── skills/
@@ -68,8 +68,8 @@ For a streamlined installation on an existing CachyOS setup, you can use our aut
 
 ```bash
 # Clone the repository
-git clone https://github.com/NishantJLU/Cachy-OS-guide.git
-cd Cachy-OS-guide
+git clone https://github.com/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey.git
+cd a-collection-of-tweaks-and-notes-from-my-cachyos-journey
 
 # Execute the setup script
 ./setup.sh
