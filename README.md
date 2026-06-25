@@ -10,13 +10,13 @@ This guide will walk you through setting up CachyOS, installing Ollama (with GPU
 graph TD
     User([User CLI / TUI]) <-->|Interacts with| Hermes[Hermes Agent]
     
-    subgraph local [Local Environment (CachyOS)]
+    subgraph local ["Local Environment (CachyOS)"]
         Hermes <-->|Local API Port 11434| Ollama[Ollama Service]
-        Ollama <-->|Hardware Acceleration| GPU[(GPU: CUDA / ROCm / Vulkan)]
+        Ollama <-->|Hardware Acceleration| GPU[("GPU: CUDA / ROCm / Vulkan")]
         Hermes <-->|Executes commands| Shell[System Shell & OS Tools]
     end
 
-    subgraph cloud [Cloud Environment]
+    subgraph cloud ["Cloud Environment"]
         Hermes <-->|Secure HTTPS API| OpenAI[OpenAI API / GPT-4o]
     end
 
