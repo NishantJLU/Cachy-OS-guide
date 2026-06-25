@@ -155,6 +155,11 @@ Once in the live environment, launch the installer and follow the partitions. Du
 > [!TIP]
 > **Our Recommendation:** Select **`linux-cachyos-bore`**. It prioritizes interactive graphical processes and terminal inputs, which keeps your GUI completely smooth even when background agents are running heavy 100% CPU inference tasks.
 
+### 4.3 CachyOS Hello Screen
+Upon booting into your new installation, you will be greeted by the CachyOS Hello welcoming assistant. Use this tool to easily download extra gaming packages, configure system settings, or install alternative kernels.
+
+![CachyOS Hello Screen](https://github.com/user-attachments/assets/b555d6a5-9550-4869-9a41-734a09d806bf)
+
 ---
 
 ## 5. Hardware Profiles
@@ -362,6 +367,9 @@ Below are actual gaming frame rate (FPS) measurements comparing a standard Windo
 | **Cyberpunk 2077** (Medium, 1080p, DLSS Bal) | 58 FPS | **64 FPS** | **+10.3%** |
 | **God of War Ragnarok** (Original, 1080p) | 72 FPS | **78 FPS** | **+8.3%** |
 | **Counter-Strike 2** (Low-Med Competitive) | 240 FPS | **260 FPS** | **+8.3%** |
+
+### Visualized Gaming Performance:
+![Gaming FPS Comparison Graph](assets/fps_benchmark_graph.png)
 
 ---
 
