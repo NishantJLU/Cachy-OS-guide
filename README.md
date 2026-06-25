@@ -1,5 +1,11 @@
 # Setup Guide: CachyOS & Hermes Agent (with Ollama or OpenAI)
 
+[![License: MIT](https://img.shields.io/github/license/NishantJLU/Cachy-OS-guide?style=for-the-badge&logo=github&color=blue)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/NishantJLU/Cachy-OS-guide?style=for-the-badge&logo=github&color=gold)](https://github.com/NishantJLU/Cachy-OS-guide/stargazers)
+[![OS: CachyOS](https://img.shields.io/badge/OS-CachyOS-green?style=for-the-badge&logo=arch-linux&logoColor=white)](https://cachyos.org)
+[![Engine: Ollama](https://img.shields.io/badge/Engine-Ollama-black?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com)
+[![Agent: Hermes](https://img.shields.io/badge/Agent-Hermes-purple?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/NousResearch/hermes-agent)
+
 Welcome to the ultimate setup guide for running **Hermes Agent** on **CachyOS**. CachyOS is a highly optimized Arch Linux-based distribution designed for maximum system performance and responsiveness, making it the perfect local environment to run autonomous agents and local LLMs. 
 
 This guide will walk you through setting up CachyOS, installing Ollama (with GPU acceleration), installing Hermes Agent, and configuring it with either a local Ollama model or cloud-based OpenAI APIs.
@@ -22,6 +28,8 @@ This guide will walk you through setting up CachyOS, installing Ollama (with GPU
 7. [Step 5: Running & Interacting with Hermes](#step-5-running--interacting-with-hermes)
 8. [Troubleshooting & Common Errors](#troubleshooting--common-errors)
 9. [Customizing Hermes with Skills](#9-customizing-hermes-with-skills)
+10. [Advanced Performance Tuning (CachyOS Special)](#10-advanced-performance-tuning-cachyos-special)
+11. [Frequently Asked Questions (FAQ)](#11-frequently-asked-questions-faq)
 
 ---
 
@@ -377,3 +385,70 @@ To register these skills with your local Hermes Agent:
 2. Restart your Hermes Agent CLI session.
 3. Test a skill trigger in chat:
    > *"Check CachyOS system performance profile"*
+
+---
+
+## 10. Advanced Performance Tuning (CachyOS Special)
+
+Since CachyOS is compiled with optimizations and runs the custom `linux-cachyos` kernel, you can apply these tweaks to maximize local model generation speeds.
+
+### 10.1 CPU Governor Optimization
+Ensure your CPU cores run in high-performance mode to accelerate processing during token generation:
+```bash
+# Set scaling governor to performance for all CPU cores
+echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+```
+*(CachyOS users can also configure this permanently in `/etc/default/cpupower` or via the GUI CachyOS Settings app).*
+
+### 10.2 System Memory Maps (sysctl)
+AI models require large memory-mapped allocations. Adjust kernel VM parameters to optimize memory allocation and reduce swap usage:
+Create or edit `/etc/sysctl.d/99-ai-optimizations.conf`:
+```ini
+# Increase maximum memory map areas
+vm.max_map_count=2097152
+
+# Reduce swappiness to favor RAM caching over disk swap
+vm.swappiness=10
+```
+Apply the configuration changes:
+```bash
+sudo sysctl --system
+```
+
+### 10.3 Ollama Parallelism (For Multi-Tool Agent Execution)
+Since Hermes is an autonomous agent, it may trigger multiple parallel tool execution requests. Configure Ollama to handle concurrency by creating a systemd override config:
+```bash
+sudo systemctl edit ollama.service
+```
+Add the following configuration lines to support parallel inference slots (ensure your hardware has sufficient VRAM/RAM):
+```ini
+[Service]
+Environment="OLLAMA_NUM_PARALLEL=2"
+Environment="OLLAMA_MAX_LOADED_MODELS=1"
+```
+Save the file, then reload systemd and restart the service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart ollama.service
+```
+
+---
+
+## 11. Frequently Asked Questions (FAQ)
+
+**Q: How do I update Hermes Agent when a new version is released?**
+**A:** Run the installation script again. It will check and pull down the latest stable build of the binary without wiping your configurations:
+```bash
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+```
+
+**Q: Can I run other models (like Qwen or Gemma) instead of Hermes?**
+**A:** Yes. Hermes Agent is model-agnostic. You can pull any model in Ollama (e.g. `gemma2` or `qwen2.5`) and run `hermes model` to select it. However, the agent is optimized and fine-tuned to function best with instruction-following models like `hermes3:8b`.
+
+**Q: Where are my long-term memories and conversations stored?**
+**A:** They are stored in your home directory at `~/.hermes/memory/` and `~/.hermes/history/`. You can back up the `~/.hermes` folder to preserve all your agent settings, skills, and memory databases.
+
+**Q: How do I test if my GPU acceleration is actively used during generations?**
+**A:** While the agent is responding, open a terminal window and check your GPU usage utility:
+*   **NVIDIA:** `nvidia-smi`
+*   **AMD:** `radeontop` (or `watch cat /sys/class/drm/card0/device/gpu_busy_percent`)
