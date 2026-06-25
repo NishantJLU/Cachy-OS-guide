@@ -4,22 +4,60 @@ Welcome to the ultimate setup guide for running **Hermes Agent** on **CachyOS**.
 
 This guide will walk you through setting up CachyOS, installing Ollama (with GPU acceleration), installing Hermes Agent, and configuring it with either a local Ollama model or cloud-based OpenAI APIs.
 
+### Architecture Overview
+
+```mermaid
+graph TD
+    User([User CLI / TUI]) <-->|Interacts with| Hermes[Hermes Agent]
+    
+    subgraph local [Local Environment (CachyOS)]
+        Hermes <-->|Local API Port 11434| Ollama[Ollama Service]
+        Ollama <-->|Hardware Acceleration| GPU[(GPU: CUDA / ROCm / Vulkan)]
+        Hermes <-->|Executes commands| Shell[System Shell & OS Tools]
+    end
+
+    subgraph cloud [Cloud Environment]
+        Hermes <-->|Secure HTTPS API| OpenAI[OpenAI API / GPT-4o]
+    end
+
+    style local fill:#152822,stroke:#00a36c,stroke-width:2px;
+    style cloud fill:#1a1530,stroke:#6e34eb,stroke-width:1px;
+    style GPU fill:#232420,stroke:#ffcc00,stroke-width:1px;
+```
+
 ---
 
 ## Table of Contents
-1. [Prerequisites & System Requirements](#1-prerequisites--system-requirements)
-2. [Step 1: Installing & Optimizing CachyOS](#step-1-installing--optimizing-cachyos)
-3. [Step 2: Installing Ollama (Local Inference)](#step-2-installing-ollama-local-inference)
-4. [Step 3: Installing Hermes Agent](#step-3-installing-hermes-agent)
-5. [Step 4: Configuring LLM Providers](#step-4-configuring-llm-providers)
+1. [Quick Start (Automated Script)](#quick-start-automated-script)
+2. [Prerequisites & System Requirements](#2-prerequisites--system-requirements)
+3. [Step 1: Installing & Optimizing CachyOS](#step-1-installing--optimizing-cachyos)
+4. [Step 2: Installing Ollama (Local Inference)](#step-2-installing-ollama-local-inference)
+5. [Step 3: Installing Hermes Agent](#step-3-installing-hermes-agent)
+6. [Step 4: Configuring LLM Providers](#step-4-configuring-llm-providers)
    - [Option A: Local Inference via Ollama](#option-a-local-inference-via-ollama)
    - [Option B: Cloud Inference via OpenAI](#option-b-cloud-inference-via-openai)
-6. [Step 5: Running & Interacting with Hermes](#step-5-running--interacting-with-hermes)
-7. [Troubleshooting & Common Errors](#troubleshooting--common-errors)
+7. [Step 5: Running & Interacting with Hermes](#step-5-running--interacting-with-hermes)
+8. [Troubleshooting & Common Errors](#troubleshooting--common-errors)
+9. [Customizing Hermes with Skills](#9-customizing-hermes-with-skills)
 
 ---
 
-## 1. Prerequisites & System Requirements
+## Quick Start (Automated Script)
+
+For a streamlined installation on an existing CachyOS setup, you can use our automated setup script which detects your GPU type and configures Ollama, system drivers, user groups, and the Hermes Agent automatically:
+
+```bash
+# Clone the repository
+git clone https://github.com/NishantJLU/Cachy-OS-guide.git
+cd Cachy-OS-guide
+
+# Execute the setup script
+./setup.sh
+```
+
+---
+
+## 2. Prerequisites & System Requirements
 
 Before you begin, ensure your hardware meets the recommended requirements:
 
@@ -338,3 +376,21 @@ Here are the most common errors users face during setup and how to resolve them.
         ```
         In the editor, modify target tools or check `~/.hermes/logs/` for detailed error trace outputs to see which tool execution triggered the sandbox warning.
 
+---
+
+## 9. Customizing Hermes with Skills
+
+This repository includes custom pre-configured skills that teach your Hermes Agent how to perform CachyOS system-specific tasks:
+*   [cachyos_system_info](file:///home/nishoo/Projects/Cachy%20OS%20Guide/skills/cachyos_system_info/SKILL.md) — Inspects CPU governor, active optimization flags, BTRFS configurations, and kernel type.
+*   [system_monitoring](file:///home/nishoo/Projects/Cachy%20OS%20Guide/skills/system_monitoring/SKILL.md) — Checks memory footprint, top CPU-consuming tasks, and GPU usage metrics.
+
+### How to use these skills:
+To register these skills with your local Hermes Agent:
+1. Copy the skills to your local custom skills directory (usually under `~/.hermes/skills/` or the `.agents/skills/` directory inside your active project root):
+   ```bash
+   mkdir -p ~/.hermes/skills/
+   cp -r skills/* ~/.hermes/skills/
+   ```
+2. Restart your Hermes Agent CLI session.
+3. Test a skill trigger in chat:
+   > *"Check CachyOS system performance profile"*
