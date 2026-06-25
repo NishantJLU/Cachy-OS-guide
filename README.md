@@ -359,17 +359,17 @@ Below are actual gaming frame rate (FPS) measurements comparing a standard Windo
 ### Test System Specifications:
 *   **CPU:** Intel Core i5-12450H (8 Cores, 12 Threads)
 *   **GPU:** NVIDIA GeForce RTX 3050 Laptop GPU (95W TGP, 4GB VRAM)
-*   **RAM:** 16GB DDR4 3200MHz
+*   **RAM:** 16GB DDR5
 *   **Storage:** 512GB NVMe SSD (BTRFS on CachyOS, NTFS on Windows)
 
 | Game | FPS (Windows 11) | FPS (CachyOS) | Performance Difference |
 | :--- | :--- | :--- | :--- |
-| **Cyberpunk 2077** (Medium, 1080p, DLSS Bal) | 58 FPS | **64 FPS** | **+10.3%** |
-| **God of War Ragnarok** (Original, 1080p) | 72 FPS | **78 FPS** | **+8.3%** |
-| **Counter-Strike 2** (Low-Med Competitive) | 240 FPS | **260 FPS** | **+8.3%** |
+| **Cyberpunk 2077** (1080p, High) | 58 FPS | **64 FPS** | **+10.3%** |
+| **God of War Ragnarok** (1080p, High) | 72 FPS | **78 FPS** | **+8.3%** |
+| **Counter-Strike 2 (CS2)** (1080p, Competitive) | 240 FPS | **260 FPS** | **+8.3%** |
 
 ### Visualized Gaming Performance:
-![Gaming FPS Comparison Graph](assets/fps_benchmark_graph.png)
+![Gaming FPS Comparison Graph](assets/fps_benchmark_graph.jpg)
 
 ---
 
