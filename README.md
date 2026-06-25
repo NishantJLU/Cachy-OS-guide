@@ -18,18 +18,19 @@ This guide will walk you through setting up CachyOS, installing Ollama (with GPU
 
 ## Table of Contents
 1. [Quick Start (Automated Script)](#quick-start-automated-script)
-2. [Prerequisites & System Requirements](#2-prerequisites--system-requirements)
-3. [Step 1: Installing & Optimizing CachyOS](#step-1-installing--optimizing-cachyos)
-4. [Step 2: Installing Ollama (Local Inference)](#step-2-installing-ollama-local-inference)
-5. [Step 3: Installing Hermes Agent](#step-3-installing-hermes-agent)
-6. [Step 4: Configuring LLM Providers](#step-4-configuring-llm-providers)
+2. [Why CachyOS? (vs. Windows & macOS)](#2-why-cachyos-vs-windows--macos)
+3. [Prerequisites & System Requirements](#3-prerequisites--system-requirements)
+4. [Step 1: Installing & Optimizing CachyOS](#step-1-installing--optimizing-cachyos)
+5. [Step 2: Installing Ollama (Local Inference)](#step-2-installing-ollama-local-inference)
+6. [Step 3: Installing Hermes Agent](#step-3-installing-hermes-agent)
+7. [Step 4: Configuring LLM Providers](#step-4-configuring-llm-providers)
    - [Option A: Local Inference via Ollama](#option-a-local-inference-via-ollama)
    - [Option B: Cloud Inference via OpenAI](#option-b-cloud-inference-via-openai)
-7. [Step 5: Running & Interacting with Hermes](#step-5-running--interacting-with-hermes)
-8. [Troubleshooting & Common Errors](#troubleshooting--common-errors)
-9. [Customizing Hermes with Skills](#9-customizing-hermes-with-skills)
-10. [Advanced Performance Tuning (CachyOS Special)](#10-advanced-performance-tuning-cachyos-special)
-11. [Frequently Asked Questions (FAQ)](#11-frequently-asked-questions-faq)
+8. [Step 5: Running & Interacting with Hermes](#step-5-running--interacting-with-hermes)
+9. [Troubleshooting & Common Errors](#troubleshooting--common-errors)
+10. [Customizing Hermes with Skills](#10-customizing-hermes-with-skills)
+11. [Advanced Performance Tuning (CachyOS Special)](#11-advanced-performance-tuning-cachyos-special)
+12. [Frequently Asked Questions (FAQ)](#12-frequently-asked-questions-faq)
 
 ---
 
@@ -48,7 +49,43 @@ cd Cachy-OS-guide
 
 ---
 
-## 2. Prerequisites & System Requirements
+## 2. Why CachyOS? (vs. Windows & macOS)
+
+When setting up local AI environments and autonomous agent systems like Hermes, the operating system plays a vital role in model latency and system overhead. Below is an overview of how CachyOS compares to Windows 11 and macOS (Apple Silicon).
+
+### Key Architectural Advantages of CachyOS
+
+1.  **x86-64-v3/v4 Compiler Optimizations:** CachyOS compiles its entire repository packages with `-O3` and specific CPU architecture instructions (AVX2/AVX512). This native execution yields 10% to 20% faster CPU tensor math execution compared to generic Windows and Linux builds.
+2.  **EEVDF & BORE CPU Schedulers:** The default Linux kernels in CachyOS prioritize low-latency scheduling. When running heavy local model inference in the background, your GUI remains highly responsive.
+3.  **Low Boot Memory Footprint:** Unlike Windows and macOS which consume between 4GB and 6GB of system RAM on boot, CachyOS uses less than 1.5GB. This frees up maximum RAM/VRAM capacity to load larger model parameters (e.g., loading 12B/32B models locally).
+4.  **ZRAM Memory Compression:** CachyOS uses ZRAM with ZSTD compression by default. If your local model temporarily overflows physical memory, swap operations are processed in compressed RAM rather than writing to slow disk storage, preventing system lockups.
+
+### Quick Comparison Matrix
+
+| Feature | CachyOS (Arch) | Windows 11 | macOS (Apple Silicon) |
+| :--- | :--- | :--- | :--- |
+| **Out-of-box GPU Accel** | Manual (via pacman) | Plug-and-Play | Native (Unified Memory/Metal) |
+| **Boot RAM Overhead** | Very Low (< 1.5 GB) | High (4 - 5 GB) | Medium (3 - 4 GB) |
+| **Virtualization Overhead** | None (Native) | Medium (WSL2 overhead) | High (if using containers) |
+| **V3/V4 HW Optimizations** | Native (O3 compiled) | None (Generic binaries) | Native (Apple CoreML/Accelerate) |
+| **Custom Kernel Scheduler** | Yes (BORE / EEVDF) | No (Windows Scheduler) | No (Darwin Scheduler) |
+
+### Pros & Cons Summary
+
+#### 🟢 Pros of CachyOS
+*   **Maximum Hardware Output:** Zero virtualization or background service overhead means every compute cycle goes directly to your local LLM engine.
+*   **BTRFS Filesystem:** Offers fast filesystem read operations and native transparent file compression.
+*   **BBR TCP Network Control:** Speeds up downloading massive multi-gigabyte models from Hugging Face or Ollama.
+*   **Zero Bloatware:** Complete system control with no tracking or forced system update interruptions.
+
+#### 🔴 Cons of CachyOS
+*   **Learning Curve:** Requires familiarity with Arch package managers (`pacman` / `yay`) and terminal shell configurations.
+*   **Manual NVIDIA/AMD Drivers:** Installing correct graphics integration layers (like CUDA toolkit or ROCm) must be done manually via packages.
+*   **Desktop App Ecosystem:** Lacks native support for proprietary suites (e.g., Adobe Creative Suite, MS Office) or specific HDR display profiles.
+
+---
+
+## 3. Prerequisites & System Requirements
 
 Before you begin, ensure your hardware meets the recommended requirements:
 
