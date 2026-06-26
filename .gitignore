@@ -1,0 +1,15 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*~
+*.swp
+*.tmp
+
+# User-specific configuration
+.env
+.venv/
+venv/
+node_modules/

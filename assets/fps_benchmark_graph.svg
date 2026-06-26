@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="winGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff6b81" />
+      <stop offset="100%" stop-color="#ff4757" />
+    </linearGradient>
+    <linearGradient id="cachyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2ed573" />
+      <stop offset="100%" stop-color="#7bed9f" />
+    </linearGradient>
+  </defs>
+  
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --border-color: #30363d;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --grid-line: #21262d;
+      --win-color: url(#winGrad);
+      --cachy-color: url(#cachyGrad);
+    }
+    
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-color: #f6f8fa;
+        --card-bg: #ffffff;
+        --border-color: #d0d7de;
+        --text-main: #24292f;
+        --text-muted: #57606a;
+        --grid-line: #d8dee4;
+      }
+    }
+    
+    .bg {
+      fill: var(--bg-color);
+      transition: fill 0.3s ease;
+    }
+    
+    .card {
+      fill: var(--card-bg);
+      stroke: var(--border-color);
+      stroke-width: 1.5;
+      rx: 12px;
+      transition: fill 0.3s ease, stroke 0.3s ease;
+    }
+    
+    .title {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      fill: var(--text-main);
+    }
+    
+    .subtitle {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      fill: var(--text-muted);
+    }
+    
+    .legend-text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      fill: var(--text-main);
+    }
+    
+    .axis-text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      fill: var(--text-muted);
+    }
+    
+    .game-title {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      fill: var(--text-main);
+    }
+    
+    .game-desc {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      fill: var(--text-muted);
+    }
+    
+    .grid {
+      stroke: var(--grid-line);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+    
+    .bar-win {
+      fill: var(--win-color);
+      rx: 3px;
+      height: 18px;
+    }
+    
+    .bar-cachy {
+      fill: var(--cachy-color);
+      rx: 3px;
+      height: 18px;
+    }
+    
+    .val-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      fill: var(--text-main);
+    }
+    
+    .val-diff {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      fill: #2ed573;
+    }
+    
+    .footer-text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      fill: var(--text-muted);
+    }
+  </style>
+
+  <!-- Background and outer card -->
+  <rect class="bg" width="100%" height="100%" />
+  <rect class="card" x="12" y="12" width="776" height="456" />
+
+  <!-- Header -->
+  <text class="title" x="40" y="48">Gaming FPS Comparison</text>
+  <text class="subtitle" x="40" y="70">Windows 11 vs. CachyOS (Higher is better)</text>
+  
+  <!-- Legend -->
+  <g transform="translate(500, 38)">
+    <rect x="0" y="0" width="14" height="14" fill="url(#winGrad)" rx="3" />
+    <text class="legend-text" x="22" y="12">Windows 11</text>
+    
+    <rect x="130" y="0" width="14" height="14" fill="url(#cachyGrad)" rx="3" />
+    <text class="legend-text" x="152" y="12">CachyOS</text>
+  </g>
+
+  <!-- Chart Grid (X = 260 to X = 710) -->
+  <!-- 0 FPS at 260, 280 FPS at 710 (Scale: 450 px = 280 FPS -> ~1.6 px per FPS) -->
+  <!-- Vertical Grid Lines -->
+  <!-- 0 -->
+  <line class="grid" x1="260" y1="100" x2="260" y2="400" />
+  <text class="axis-text" x="260" y="418" text-anchor="middle">0</text>
+  
+  <!-- 50 -->
+  <line class="grid" x1="340.3" y1="100" x2="340.3" y2="400" />
+  <text class="axis-text" x="340.3" y="418" text-anchor="middle">50</text>
+  
+  <!-- 100 -->
+  <line class="grid" x1="420.7" y1="100" x2="420.7" y2="400" />
+  <text class="axis-text" x="420.7" y="418" text-anchor="middle">100</text>
+  
+  <!-- 150 -->
+  <line class="grid" x1="501.1" y1="100" x2="501.1" y2="400" />
+  <text class="axis-text" x="501.1" y="418" text-anchor="middle">150</text>
+  
+  <!-- 200 -->
+  <line class="grid" x1="581.4" y1="100" x2="581.4" y2="400" />
+  <text class="axis-text" x="581.4" y="418" text-anchor="middle">200</text>
+  
+  <!-- 250 -->
+  <line class="grid" x1="661.8" y1="100" x2="661.8" y2="400" />
+  <text class="axis-text" x="661.8" y="418" text-anchor="middle">250</text>
+
+  <!-- Row 1: Cyberpunk 2077 -->
+  <g transform="translate(0, 110)">
+    <text class="game-title" x="40" y="20">Cyberpunk 2077</text>
+    <text class="game-desc" x="40" y="38">1080p, High Settings</text>
+    
+    <!-- Win Bar: 58 FPS -> 58 * 1.607 = 93.2 px -->
+    <rect class="bar-win" x="260" y="10" width="93.2" />
+    <text class="val-label" x="360.2" y="23">58 FPS</text>
+    
+    <!-- Cachy Bar: 64 FPS -> 64 * 1.607 = 102.8 px -->
+    <rect class="bar-cachy" x="260" y="32" width="102.8" />
+    <text class="val-label" x="369.8" y="45">64 FPS <tspan class="val-diff">(+10.3%)</tspan></text>
+  </g>
+
+  <!-- Row 2: God of War Ragnarok -->
+  <g transform="translate(0, 205)">
+    <text class="game-title" x="40" y="20">God of War Ragnarok</text>
+    <text class="game-desc" x="40" y="38">1080p, High Settings</text>
+    
+    <!-- Win Bar: 72 FPS -> 72 * 1.607 = 115.7 px -->
+    <rect class="bar-win" x="260" y="10" width="115.7" />
+    <text class="val-label" x="382.7" y="23">72 FPS</text>
+    
+    <!-- Cachy Bar: 78 FPS -> 78 * 1.607 = 125.3 px -->
+    <rect class="bar-cachy" x="260" y="32" width="125.3" />
+    <text class="val-label" x="392.3" y="45">78 FPS <tspan class="val-diff">(+8.3%)</tspan></text>
+  </g>
+
+  <!-- Row 3: Counter-Strike 2 -->
+  <g transform="translate(0, 300)">
+    <text class="game-title" x="40" y="20">Counter-Strike 2 (CS2)</text>
+    <text class="game-desc" x="40" y="38">1080p, Competitive Settings</text>
+    
+    <!-- Win Bar: 240 FPS -> 240 * 1.607 = 385.7 px -->
+    <rect class="bar-win" x="260" y="10" width="385.7" />
+    <text class="val-label" x="652.7" y="23">240 FPS</text>
+    
+    <!-- Cachy Bar: 260 FPS -> 260 * 1.607 = 417.8 px -->
+    <rect class="bar-cachy" x="260" y="32" width="417.8" />
+    <text class="val-label" x="684.8" y="45">260 FPS <tspan class="val-diff">(+8.3%)</tspan></text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="40" y1="440" x2="760" y2="440" stroke="var(--grid-line)" stroke-width="1" />
+  <text class="footer-text" x="40" y="454">Test System: Intel i5-12450H | RTX 3050 Laptop GPU | 16GB DDR5 | linux-cachyos-bore Kernel</text>
+</svg>

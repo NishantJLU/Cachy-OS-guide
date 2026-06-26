@@ -1,37 +1,94 @@
-# Setup Guide: CachyOS & Hermes Agent (with Ollama or OpenAI)
+# CachyOS Performance Tweaks & Local AI Setup Guide (Hermes Agent & Ollama)
 
-[![License: MIT](https://img.shields.io/github/license/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey?style=for-the-badge&logo=github&color=blue)](LICENSE)
+[![License: MIT](https://img.shields.io/github/license/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey?style=for-the-badge&logo=github&color=blue)](file:///home/nishoo/Projects/Cachy%20OS%20Guide/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey?style=for-the-badge&logo=github&color=gold)](https://github.com/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey/stargazers)
 [![OS: CachyOS](https://img.shields.io/badge/OS-CachyOS-green?style=for-the-badge&logo=arch-linux&logoColor=white)](https://cachyos.org)
 [![Engine: Ollama](https://img.shields.io/badge/Engine-Ollama-black?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com)
 [![Agent: Hermes](https://img.shields.io/badge/Agent-Hermes-purple?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/NousResearch/hermes-agent)
 
-Welcome to the ultimate setup guide for running **Hermes Agent** on **CachyOS**. CachyOS is a highly optimized Arch Linux-based distribution designed for maximum system performance and responsiveness, making it the perfect local environment to run autonomous agents and local LLMs. 
+**Last Verified:** June 26, 2026 | **CachyOS Kernel:** `7.0.12-1-cachyos-bore-lto` | **Ollama:** `0.30.10` | **Hermes Agent:** `v0.17.0`
 
-This guide will walk you through setting up CachyOS, installing Ollama (with GPU acceleration), installing Hermes Agent, and configuring it with either a local Ollama model or cloud-based OpenAI APIs.
+This guide and accompanying configurations are licensed under the [MIT License](file:///home/nishoo/Projects/Cachy%20OS%20Guide/LICENSE).
+
+---
+
+Welcome to the ultimate setup guide and collection of performance tweaks for **CachyOS**. CachyOS is a highly optimized Arch Linux-based distribution compiled with `-O3` and CPU-specific instructions (AVX2/AVX512). This makes it the premier local environment for running high-throughput autonomous agents, local LLMs, and low-latency gaming.
+
+This repository serves a dual purpose:
+1. **Local AI Agent Environment**: A complete guide to setting up **Hermes Agent** (by Nous Research) on CachyOS with local GPU-accelerated **Ollama** and custom system-level skills.
+2. **CachyOS System Optimizations**: Broader performance tweaks (kernel schedulers, BTRFS compression, memory optimization, hybrid GPU configurations, and gaming tools like Proton-CachyOS) to get the most out of your hardware.
 
 ---
 
 ### Repository Structure
 ```text
-A collection of tweaks and notes from my CachyOS journey (Repository Root)
+CachyOS & Hermes Agent Guide (Repository Root)
 ├── assets/
-│   └── architecture.jpg        # Architecture diagram
+│   └── fps_benchmark_graph.svg # Gaming benchmark chart
 ├── skills/
 │   ├── cachyos_system_info/
 │   │   └── SKILL.md            # Hermes skill for system info
 │   └── system_monitoring/
-│   │   └── SKILL.md            # Hermes skill for usage monitoring
+│       └── SKILL.md            # Hermes skill for usage monitoring
+├── .gitignore                  # Git untracked pattern file
+├── CONTRIBUTING.md             # Guidelines for community contributions
 ├── LICENSE                     # MIT License
 ├── README.md                   # Main guide documentation
 └── setup.sh                    # Automated setup script
 ```
+- Custom Skills: [cachyos_system_info](file:///home/nishoo/Projects/Cachy%20OS%20Guide/skills/cachyos_system_info/SKILL.md), [system_monitoring](file:///home/nishoo/Projects/Cachy%20OS%20Guide/skills/system_monitoring/SKILL.md)
+- Hygiene Files: [CONTRIBUTING.md](file:///home/nishoo/Projects/Cachy%20OS%20Guide/CONTRIBUTING.md), [.gitignore](file:///home/nishoo/Projects/Cachy%20OS%20Guide/.gitignore)
+- Configuration: [LICENSE](file:///home/nishoo/Projects/Cachy%20OS%20Guide/LICENSE), [setup.sh](file:///home/nishoo/Projects/Cachy%20OS%20Guide/setup.sh)
 
 ---
 
 ### Architecture Overview
 
-![Architecture Overview](assets/architecture.jpg)
+```mermaid
+graph TD
+    subgraph UI["User Interface"]
+        TUI["Interactive CLI ('hermes chat')"]
+        CMD["Single Command ('hermes run')"]
+    end
+
+    subgraph HermesCore["Hermes Agent Core"]
+        Agent["Autonomous Agent Loop"]
+        Memory["Persistent Memory (~/.hermes/memory/)"]
+        SkillEngine["Skill Engine (executes scripts)"]
+    end
+
+    subgraph Providers["LLM Providers (Inference)"]
+        subgraph Local["Local Backend"]
+            Ollama["Ollama Service (localhost:11434)"]
+            Model["Hermes 3 Model (hermes3:8b)"]
+        end
+        subgraph Cloud["Cloud Backend"]
+            OpenAI["OpenAI API (GPT-4o)"]
+        end
+    end
+
+    subgraph OS["Host Operating System (CachyOS)"]
+        Kernel["linux-cachyos-bore Kernel (BORE Scheduler)"]
+        GPU["GPU Acceleration (CUDA / ROCm / Vulkan)"]
+        FS["BTRFS Filesystem (noatime, compress=zstd)"]
+        Skills["Custom Skills (~/.hermes/skills/)"]
+    end
+
+    %% Connections
+    TUI --> Agent
+    CMD --> Agent
+    Agent <--> Memory
+    Agent <--> SkillEngine
+    
+    Agent --> Providers
+    Ollama --> Model
+    
+    %% Host Interactions
+    SkillEngine <--> Skills
+    Skills --> Kernel
+    Model -.-> GPU
+    Ollama -.-> FS
+```
 
 ---
 
@@ -64,14 +121,31 @@ A collection of tweaks and notes from my CachyOS journey (Repository Root)
 
 ## 1. Quick Start (Automated Script)
 
-For a streamlined installation on an existing CachyOS setup, you can use our automated setup script which detects your GPU type and configures Ollama, system drivers, user groups, and the Hermes Agent automatically:
+For a streamlined installation on an existing CachyOS or Arch setup, you can use the automated setup script. This script detects your GPU type and configures Ollama, system drivers, user groups, and the Hermes Agent automatically.
+
+> [!CAUTION]
+> **Safety First:** Piping or executing scripts directly using `sudo` poses security risks. You are strongly encouraged to inspect [setup.sh](file:///home/nishoo/Projects/Cachy%20OS%20Guide/setup.sh) before running it:
+> ```bash
+> # Inspect the script locally
+> cat setup.sh
+> ```
+
+### What the script does:
+1. **OS Verification:** Confirms that the target system is running CachyOS or an Arch Linux derivative.
+2. **System Update:** Updates package databases using `pacman -Syu`.
+3. **GPU Auto-Detection:** Scans PCI buses using `lspci` for graphics hardware (NVIDIA, AMD, Intel, or CPU-only) to select corresponding packages.
+4. **Package Installation:** Installs basic dependencies (`base-devel`, `git`, `curl`, `xz`, `ripgrep`, `ffmpeg`) and maps the matching Ollama build (e.g., `ollama-cuda`, `ollama-rocm`, `ollama-vulkan`, or standard `ollama`).
+5. **Permissions & Hardware Acceleration:** Adds the active `$USER` to the `video` and `render` system groups to grant access to raw GPU hardware layers.
+6. **Systemd Service Setup:** Enables and starts the local `ollama.service`.
+7. **Hermes Agent Deployment:** Fetches and runs the official Nous Research Hermes Agent installer script.
+8. **Model Initialization:** Downloads the recommended local LLM (`hermes3:8b`) via Ollama.
 
 ```bash
 # Clone the repository
 git clone https://github.com/NishantJLU/a-collection-of-tweaks-and-notes-from-my-cachyos-journey.git
 cd a-collection-of-tweaks-and-notes-from-my-cachyos-journey
 
-# Execute the setup script
+# Review and run the installer
 ./setup.sh
 ```
 
@@ -368,8 +442,11 @@ Below are actual gaming frame rate (FPS) measurements comparing a standard Windo
 | **God of War Ragnarok** (1080p, High) | 72 FPS | **78 FPS** | **+8.3%** |
 | **Counter-Strike 2 (CS2)** (1080p, Competitive) | 240 FPS | **260 FPS** | **+8.3%** |
 
+> [!NOTE]
+> **Methodology:** Benchmark figures represent the mathematical average of 3 consecutive runs per game. In-game benchmark tools were used for Cyberpunk 2077, and MangoHud session logging was used for God of War Ragnarok and Counter-Strike 2. Windows 11 was tested on driver v555.xx; CachyOS was tested on driver v555.xx using the `linux-cachyos-bore` kernel.
+
 ### Visualized Gaming Performance:
-![Gaming FPS Comparison Graph](assets/fps_benchmark_graph.jpg)
+![Gaming FPS Comparison Graph](assets/fps_benchmark_graph.svg)
 
 ---
 
